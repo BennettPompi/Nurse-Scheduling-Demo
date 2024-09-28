@@ -1,4 +1,4 @@
-# Project Plan
+# Project Roadmap
 
 ### Friday
 
@@ -9,6 +9,8 @@
   \-  Greedy solution seems fine here
 
   ### Saturday
+- [x] Refactoring / Encapsulation
+- [x] Build UI / UX
 - [ ] Get Preference entry / storage working
 - [ ] set up backend / data schema
 - [ ] implement scheduling algorithm
