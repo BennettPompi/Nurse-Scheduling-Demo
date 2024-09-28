@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as api from "../services/apiService";
 
-const NursePreferences = ({ id, name, days }) => {
+const NursePreferences = ({ id, name, days }: { id: number, name: string, days: string[] }) => {
   // state for show depending on button click on the nurse itself to show details page
   const [showNursePreferredShifts, setShowNursePreferredShifts] =
     useState(false);
@@ -21,7 +21,7 @@ const NursePreferences = ({ id, name, days }) => {
     setShowNursePreferredShifts((show) => !show);
   };
 
-  const handleSubmitPreferences = (event) => {
+  const handleSubmitPreferences = (event: any) => {
     const setPreferences = async () => {
       const shiftValues = Object.values(preferredShifts);
       let shiftsToPost = shiftValues.map((shift, ind) => {
@@ -82,14 +82,38 @@ const NursePreferences = ({ id, name, days }) => {
           Pick at least 3 preferred shifts for the week:
           <form onSubmit={handleSubmitPreferences}>
             <table className="nurse-preferences">
-              <thead>
-                <tr>
-                  <th>Day of the Week:</th>
-                  <th>Type of Shift:</th>
-                </tr>
-              </thead>
               <tbody>
-                {days.map((day) => (
+                {<table className="requirements-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      {days.map(day => <th key={day}>{day}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shifts.map(shift => (
+                      <tr key={shift}>
+                        <th>{shift}</th>
+                        {days.map(day => (
+                          <td onChange={handleChange} style={{textAlign: "center"}}>
+                            {nursePreferredShifts[day] === shifts ? (
+                              <input
+                                type="checkbox"
+                                name={day}
+                                value={shift}
+                                checked
+                              />
+                            ) : (
+                              <input type="checkbox" name={day} value={shift} />
+                            )}
+                            <br />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>}
+                {/* {days.map((day) => (
                   <tr key={"preference for " + day + " nurse with id " + id}>
                     <td>{day}</td>
                     <td onChange={handleChange}>
@@ -120,7 +144,7 @@ const NursePreferences = ({ id, name, days }) => {
                       <br />
                     </td>
                   </tr>
-                ))}
+                ))} */}
               </tbody>
             </table>
             <input type="submit" name="submit" value="Submit" />
