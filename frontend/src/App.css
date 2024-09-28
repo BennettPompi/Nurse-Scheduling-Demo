@@ -5,13 +5,14 @@
   text-align: center;
 }
 nav {
-  background-color: var(--m7-blue);
+  background-image: linear-gradient(to right, #bec6ff, #8c9eff);
   padding: 1rem;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .container {
