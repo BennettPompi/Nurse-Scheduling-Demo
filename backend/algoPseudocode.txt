@@ -1,0 +1,30 @@
+Days = Day[]
+Nurses = Nurse[]
+Schedule: Nurse[][] = []
+
+For Each Day in Days:
+    For Each Shift in Day.Shifts:
+        Divide nurses into nurses that ( marked Shift (best_choices) and have available_shifts) 
+        and those that didn't (backups):
+            if Shift is night:
+                go through best_choices, and if working day, move to would_be_double
+        Sort best_choices by available_shifts, ascending
+        needed = Shift.needed
+        shiftSchedule: Nurse[] = []
+        for nurse in best_choices:
+            if needed == 0:
+                break;
+            shiftSchedule.add(nurse)
+            nurse.available_shifts--
+            needed--
+        if needed == 0:
+            break
+        else:
+            SORT + REPEAT WITH would_be_double
+        if needed == 0:
+            pick randomly from backups
+
+// TODO: add further partitioning (people who are out of available shifts should only be assigned more as a last resort)
+
+            
+        
