@@ -10,6 +10,7 @@ const instance = axios.create({
 export default {
   getNurses: async (): Promise<NurseModel[]> => {
     const { data } = await instance.get("/nurses");
+    console.log(data)
     return data;
   },
   getNursePreferences: async (id: number): Promise<NursePrefModel> => {
@@ -17,9 +18,7 @@ export default {
     return data;
   },
   setNursePreferences: async (id: number, preferences: NursePrefModel) => {
-    const { data } = await instance.post(`/nurses/${id}/preferences`, {
-      preferences,
-    });
+    const { data } = await instance.post(`/nurses/${id}/preferences`, preferences);
     return data;
   },
 

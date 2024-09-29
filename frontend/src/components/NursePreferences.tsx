@@ -95,9 +95,10 @@ const NursePreferences = (nurse: NurseModel) => {
                   <tr key={shift}>
                     <th>{shift}</th>
                     {daysLowerArr.map(day => (
-                      <td style={{ textAlign: "center" }}>
+                      <td key={"cell-" + day + "-"+shift} style={{ textAlign: "center" }}>
                         {(
                           <input 
+                          key={day+"-"+shift}
                           onChange={handleChange}
                           type="checkbox" 
                           name={day} 

@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 
 import { ShiftEntity } from '../shift/shift.entity';
+import { NursePrefModel } from './nurse-preferences.interface';
 
 
 @Entity('nurses')
@@ -17,7 +18,7 @@ export class NurseEntity {
   name: string;
 
   @Column('json', { nullable: true })
-  preferences: string;
+  preferences: NursePrefModel;
 
   @OneToMany(() => ShiftEntity, shift => shift.nurse)
   shifts: ShiftEntity[];
