@@ -1,4 +1,5 @@
 import axios from "axios";
+import { NurseModel, NursePrefModel } from "../data-objects/nurse-preferences.interface";
 
 const API_BASE_URL = "http://localhost:3000";
 
@@ -7,16 +8,15 @@ const instance = axios.create({
 });
 
 export default {
-  // Nurse endpoints
-  getNurses: async () => {
+  getNurses: async (): Promise<NurseModel[]> => {
     const { data } = await instance.get("/nurses");
     return data;
   },
-  getNursePreferences: async (id: number) => {
+  getNursePreferences: async (id: number): Promise<NursePrefModel> => {
     const { data } = await instance.get(`/nurses/${id}/preferences`);
     return data;
   },
-  setNursePreferences: async (id: number, preferences: unknown) => {
+  setNursePreferences: async (id: number, preferences: NursePrefModel) => {
     const { data } = await instance.post(`/nurses/${id}/preferences`, {
       preferences,
     });

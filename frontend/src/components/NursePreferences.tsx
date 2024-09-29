@@ -1,21 +1,44 @@
 import React, { useEffect, useState } from "react";
-import * as api from "../services/apiService";
+import apiService, * as api from "../services/apiService";
+import "../App.css"
+import { NurseModel, NursePrefModel, ShiftPrefModel } from "../data-objects/nurse-preferences.interface";
+import { daysLowerArr, shiftsLowerArr } from "../utils";
 
-const NursePreferences = ({ id, name, days }: { id: number, name: string, days: string[] }) => {
+const NursePreferences = (nurse: NurseModel) => {
+  const defaultShiftPrefs = (): ShiftPrefModel => {
+    return { day: false, night: false };
+  }
+  const defaultNursePrefs = (): NursePrefModel => {
+    const prefs = {} as NursePrefModel;
+    for (const day of daysLowerArr) {
+      prefs[day as keyof NursePrefModel] = defaultShiftPrefs();
+    }
+    return prefs;
+  }
+
   // state for show depending on button click on the nurse itself to show details page
   const [showNursePreferredShifts, setShowNursePreferredShifts] =
     useState(false);
   // preferred shifts represents nurse preferences for the week in a format that makes it easy to render
-  const [nursePreferredShifts, setNursePreferredShifts] = useState({
-    Monday: "",
-    Tuesday: "",
-    Wednesday: "",
-    Thursday: "",
-    Friday: "",
-    Saturday: "",
-    Sunday: "",
-  });
-  const shifts = ["day", "night"];
+  const [nursePreferredShifts, setNursePreferredShifts] = useState(
+    defaultNursePrefs()
+    // {
+    //   monday_day: false, 
+    //   monday_night: false,
+    //   tuesday_day: false,
+    //   tuesday_night: false,
+    //   wednesday_day: false,
+    //   wednesday_night: false,
+    //   thursday_day: false,
+    //   thursday_night: false,
+    //   friday_day: false,
+    //   friday_night: false,
+    //   saturday_day: false,
+    //   saturday_night: false,
+    //   sunday_day: false,
+    //   sunday_night: false
+    // }
+  );
 
   const handleClick = () => {
     setShowNursePreferredShifts((show) => !show);
@@ -23,13 +46,7 @@ const NursePreferences = ({ id, name, days }: { id: number, name: string, days: 
 
   const handleSubmitPreferences = (event: any) => {
     const setPreferences = async () => {
-      const shiftValues = Object.values(preferredShifts);
-      let shiftsToPost = shiftValues.map((shift, ind) => {
-        return { dayOfWeek: days[ind], shift: shift };
-      });
-      shiftsToPost = shiftsToPost.filter((shiftDict) => shiftDict.shift !== "");
-      // TODO: call the API to submit preferences
-      console.error("Not yet implemented");
+      apiService.setNursePreferences(nurse.id, nursePreferredShifts);
     };
     event.preventDefault();
     setPreferences().catch(console.error);
@@ -38,121 +55,67 @@ const NursePreferences = ({ id, name, days }: { id: number, name: string, days: 
   useEffect(() => {
     // converts the preferences from the API to the format that is used in the state of nursePreferredShifts
     const fetchPreferences = async () => {
-      let nursePreferences = await api.default.getNursePreferences(id);
+      let nursePreferences = await api.default.getNursePreferences(nurse.id);
       if (!nursePreferences) {
-        nursePreferences = [];
+        nursePreferences = defaultNursePrefs();
       }
-      const newPreferredShifts = {
-        Monday: "",
-        Tuesday: "",
-        Wednesday: "",
-        Thursday: "",
-        Friday: "",
-        Saturday: "",
-        Sunday: "",
-      };
-      nursePreferences.forEach((nursePreference) => {
-        newPreferredShifts[nursePreference.dayOfWeek] = nursePreference.shift;
-      });
-      setNursePreferredShifts(newPreferredShifts);
+      setNursePreferredShifts(nursePreferences);
     };
     fetchPreferences().catch(console.error);
-  }, [id]);
+  }, [nurse.id]);
 
   // changing the preferredShifts in the page depending on the checkboxes
-  const handleChange = (event) => {
-    for (const child of Array.from(event.currentTarget.children)) {
-      if (child.type == "checkbox" && child.checked) {
-        setNursePreferredShifts({
-          ...nursePreferredShifts,
-          [child.name]: child.value,
-        });
-        break;
-      } else if (child.type == "checkbox") {
-        setNursePreferredShifts({ ...nursePreferredShifts, [child.name]: "" });
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked } = event.target;
+    setNursePreferredShifts(prevPrefs => ({
+      ...prevPrefs,
+      [name as keyof NursePrefModel]: {
+        ...(prevPrefs[name as keyof NursePrefModel] || {}),
+        [value]: checked
       }
-    }
+    }));
   };
 
   return (
     <div>
-      <button onClick={handleClick}>{name}</button>
+      <button onClick={handleClick}>{nurse.name}</button>
       {showNursePreferredShifts && (
         <div>
-          Pick at least 3 preferred shifts for the week:
+          Pick at least 3 preferred shiftsLowerArr for the week:
           <form onSubmit={handleSubmitPreferences}>
             <table className="nurse-preferences">
+              <thead>
+                <tr>
+                  <th></th>
+                  {daysLowerArr.map(day => <th key={day}>{day}</th>)}
+                </tr>
+              </thead>
               <tbody>
-                {<table className="requirements-table">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      {days.map(day => <th key={day}>{day}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {shifts.map(shift => (
-                      <tr key={shift}>
-                        <th>{shift}</th>
-                        {days.map(day => (
-                          <td onChange={handleChange} style={{textAlign: "center"}}>
-                            {nursePreferredShifts[day] === shifts ? (
-                              <input
-                                type="checkbox"
-                                name={day}
-                                value={shift}
-                                checked
-                              />
-                            ) : (
-                              <input type="checkbox" name={day} value={shift} />
-                            )}
-                            <br />
-                          </td>
-                        ))}
-                      </tr>
+                {shiftsLowerArr.map(shift => (
+                  <tr key={shift}>
+                    <th>{shift}</th>
+                    {daysLowerArr.map(day => (
+                      <td style={{ textAlign: "center" }}>
+                        {(
+                          <input 
+                          onChange={handleChange}
+                          type="checkbox" 
+                          name={day} 
+                          value={shift} 
+                          checked={nursePreferredShifts[day as keyof NursePrefModel][shift as keyof ShiftPrefModel]} />
+                        )}
+                        <br />
+                      </td>
                     ))}
-                  </tbody>
-                </table>}
-                {/* {days.map((day) => (
-                  <tr key={"preference for " + day + " nurse with id " + id}>
-                    <td>{day}</td>
-                    <td onChange={handleChange}>
-                      {nursePreferredShifts[day] === shifts[0] ? (
-                        <input
-                          type="checkbox"
-                          name={day}
-                          value={shifts[0]}
-                          checked
-                        />
-                      ) : (
-                        <input type="checkbox" name={day} value={shifts[0]} />
-                      )}
-                      <label htmlFor={shifts[0]} style={{ marginRight: "5px" }}>
-                        {shifts[0]}
-                      </label>
-                      {nursePreferredShifts[day] === shifts[1] ? (
-                        <input
-                          type="checkbox"
-                          name={day}
-                          value={shifts[1]}
-                          checked
-                        />
-                      ) : (
-                        <input type="checkbox" name={day} value={shifts[1]} />
-                      )}
-                      <label htmlFor={shifts[1]}>{shifts[1]}</label>
-                      <br />
-                    </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
-            <input type="submit" name="submit" value="Submit" />
+            <input style={{ marginTop: "1rem" }} type="submit" name="submit" value="Submit" />
           </form>
         </div>
       )}
     </div>
   );
 };
-
 export default NursePreferences;

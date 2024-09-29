@@ -2,17 +2,9 @@ import React, { useState, useEffect } from 'react';
 import NursePreferences from './NursePreferences';
 import * as api from '../services/apiService';
 import '../App.css';
+import { NurseModel } from '../data-objects/nurse-preferences.interface';
 const NurseRosterTable: React.FC = () => {
-    const [nurses, setNurses] = useState<unknown[] | null>(null);
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
+    const [nurses, setNurses] = useState<NurseModel[] | null>(null);
 
     useEffect(() => {
         const fetchNurses = async () => {
@@ -36,14 +28,12 @@ const NurseRosterTable: React.FC = () => {
                     </thead>
                     <tbody>
                         {nurses &&
-                            nurses.map((nurse: any) => (
+                            nurses.map((nurse: NurseModel) => (
                                 <tr key={nurse.id}>
                                     <td>{nurse.id}</td>
                                     <td>
                                         <NursePreferences
-                                            id={nurse.id}
-                                            name={nurse.name}
-                                            days={days}
+                                        {...nurse}
 
                                         />
                                     </td>
