@@ -11,6 +11,7 @@ import { NurseEntity } from 'src/nurse/nurse.entity';
 
 @Injectable()
 export class ScheduleService {
+  
   constructor(
     @InjectRepository(ScheduleEntity)
     private readonly scheduleRepository: Repository<ScheduleEntity>,
@@ -23,92 +24,48 @@ export class ScheduleService {
   /*
   Assigns nurses to a shift based on the shift requirements and the nurses' preferences.
   Returns ShiftEntity[].
-
-  It is also very ugly and if I had more time I would refactor it. Overview is in the readme, though.
   */
-  private assignToShift(nurses: NurseEntity[], requirement: ShiftRequirements):  NurseEntity[] {
+  private assignToShift(nurses: NurseEntity[], requirement: ShiftRequirements): NurseEntity[] {
     const dayIdx = daysProperArr.indexOf(requirement.dayOfWeek);
     const shiftType = requirement.shift as keyof ShiftPrefModel;
-    //set for keeping track of assigned nurses (O(1) lookup)
     const assigned = new Set<NurseEntity>();
-    //init our groups
-    const shiftPreferred: Set<NurseEntity> = new Set();
-    const shiftNotPreferred: Set<NurseEntity> = new Set();
-    
-    const noDouble: Set<NurseEntity> = new Set();
-    const wouldBeDouble: Set<NurseEntity> = new Set();
-    
-    const wouldExceedRequested: Set<NurseEntity> = new Set();
-    const wouldNotExceedRequested: Set<NurseEntity> = new Set();
 
-    const getIntersection = (setA: Set<any>, setB: Set<any>) : Set<any> => {
-      const intersection = new Set<any>();
-      for (const member of setA){
-        if (setB.has(member)){
-          intersection.add(member)
-        }
-      }
-      return intersection
-    }
-    const comparisonFunction = (a: NurseEntity, b: NurseEntity) => (a.preferences.availableShifts - b.preferences.availableShifts)
-    const assignFromGroup = (group: NurseEntity[], limit: number) => {
-      for (const nurse of group){
-        if (assigned.has(nurse)){
-          continue;
-        }
+    // Sort nurses by available shifts (ascending)
+    nurses.sort((a, b) => a.preferences.availableShifts - b.preferences.availableShifts);
+
+    // First, assign nurses who prefer this shift and didn't work the same morning
+    for (const nurse of nurses) {
+      if (assigned.size >= requirement.nursesRequired) break;
+      if (nurse.preferences.days[dayIdx][shiftType] && nurse.assignedShifts < nurse.preferences.availableShifts
+        && (Array.isArray(nurse.shifts) && nurse.shifts.length > 0 ? nurse.shifts[nurse.shifts.length - 1].dayOfWeek !== requirement.dayOfWeek : true)
+      ) {
         assigned.add(nurse);
         nurse.assignedShifts++;
-        if (assigned.size == limit || assigned.size == nurses.length){
-          return
+      }
+    }
+
+    // If we still need more nurses, assign from those who didn't prefer this shift (and didn't work the same morning)
+    if (assigned.size < requirement.nursesRequired) {
+      for (const nurse of nurses) {
+        if (assigned.size >= requirement.nursesRequired) break;
+        if (!assigned.has(nurse) && nurse.assignedShifts < nurse.preferences.availableShifts
+        && (Array.isArray(nurse.shifts) && nurse.shifts.length > 0 ? nurse.shifts[nurse.shifts.length - 1].dayOfWeek !== requirement.dayOfWeek : true)) {
+          assigned.add(nurse);
+          nurse.assignedShifts++;
         }
       }
     }
-    //separate nurses into groups
-    for (const nurse of nurses) {
 
-      if (nurse.preferences.days[dayIdx][shiftType] == true) {
-        shiftPreferred.add(nurse);
-      } else {
-        shiftNotPreferred.add(nurse);
-      }
-
-      if (!nurse.shifts || !(nurse.shifts[nurse.shifts.length-1].dayOfWeek == requirement.dayOfWeek)) {
-        noDouble.add(nurse);
-      } else {
-        wouldBeDouble.add(nurse)
-      }
-
-      if (nurse.assignedShifts >= nurse.preferences.availableShifts) {
-        wouldExceedRequested.add(nurse);
-      } else {
-        wouldNotExceedRequested.add(nurse);
-      }
-    }
-     
-    const tier1 = [...getIntersection(shiftPreferred, getIntersection(noDouble, wouldNotExceedRequested))];
-
-    assignFromGroup(tier1.sort(comparisonFunction), requirement.nursesRequired);
-    if (assigned.size == requirement.nursesRequired || assigned.size == nurses.length) {
-      return [...assigned]
-    }
-    const tier2 = [...getIntersection(shiftNotPreferred, getIntersection(noDouble, wouldNotExceedRequested))];
-    assignFromGroup(tier2.sort(comparisonFunction), requirement.nursesRequired);
-    if (assigned.size == requirement.nursesRequired || assigned.size == nurses.length) {
-      return [...assigned]
-    }
-    const tier3 = [...getIntersection(shiftNotPreferred, getIntersection(noDouble, wouldExceedRequested))];
-    assignFromGroup(tier3.sort(comparisonFunction), requirement.nursesRequired);
-    if (assigned.size == requirement.nursesRequired || assigned.size == nurses.length) {
-      return [...assigned]
-    }
+    // If we still don't have enough, assign randomly
     while (assigned.size < requirement.nursesRequired && assigned.size < nurses.length) {
-      const randomNurse = nurses[Math.floor(Math.random() * nurses.length)];
-      if (!assigned.has(randomNurse)) {
-        assigned.add(randomNurse);
-        randomNurse.assignedShifts++;
-      }
+      const availableNurses = nurses.filter(nurse => !assigned.has(nurse));
+      if (availableNurses.length === 0) break;
+      const randomNurse = availableNurses[Math.floor(Math.random() * availableNurses.length)];
+      assigned.add(randomNurse);
+      randomNurse.assignedShifts++;
     }
-    return [...assigned]
+
+    return Array.from(assigned);
   }
   async generateSchedule(): Promise<ScheduleEntity> {
     const shiftRequirements: ShiftRequirements[] = await this.shiftService.getShiftRequirements();
@@ -125,6 +82,8 @@ export class ScheduleService {
         newShift.type = requirement.shift;
         newShift.nurse = nurse;
         newShift.scheduleId = finalSchedule.id;
+        if (!nurse.shifts) nurse.shifts = [];
+        nurse.shifts.push(newShift);
         await this.shiftRepository.save(newShift);
       }
     }
