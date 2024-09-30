@@ -32,9 +32,10 @@ const Home: React.FC = () => {
       </p>
       <h3>The Scheduling Algorithm</h3>
       <p>
-        The scheduling algorithm is combines a simple round-robin approach with a grouping system.
+        The scheduling algorithm is combines a simple round-robin approach with a simple grouping system.
         This helps to maintain efficiency while also ensuring that nurses are assigned to shifts in a way that 
-        matches their preferences as closely as possible.
+        matches their preferences as closely as possible. Its relatively simple structure gives it the advantage of being
+        scalable, should preference complexity increase. 
         <br/><br/>
         I think the algorithm itself is sound, however if I had more time I would make some significant improvements.
         The main thing I would do is massively refactor it. My motivation for doing this would be to improve
