@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/apiService';
-import ScheduleList from '../components/ScheduleList';
-import ScheduleDetails from '../components/ScheduleDetails';
+import ScheduleList from './ScheduleList';
+import ScheduleDetails from './ScheduleDetails';
 
 const Schedule: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
