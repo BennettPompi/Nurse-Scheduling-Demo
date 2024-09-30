@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: m7-health-exercise-db
+    restart: always
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_DATABASE: m7_health
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - db-access
+
+  backend:
+    depends_on:
+      - db
+    build:
+      dockerfile: ./Dockerfile
+      context: ./backend
+    container_name: backend
+    restart: always
+    environment:
+      MYSQL_DATABASE: m7_health
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - 3000:3000
+    networks:
+      - db-access
+      - default
+
+  frontend:
+    depends_on:
+      - backend
+    build:
+      dockerfile: ./Dockerfile
+      context: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - 5173:5173
+    networks:
+      - default
+
+networks:
+  db-access:
+    external: false
+
+volumes:
+  db:
