@@ -113,39 +113,32 @@ export class ScheduleService {
   async generateSchedule(): Promise<ScheduleEntity> {
     const shiftRequirements: ShiftRequirements[] = await this.shiftService.getShiftRequirements();
     const nurses: NurseEntity[] = await this.nurseService.getNurses();
-    const finalSchedule = this.scheduleRepository.create();
+    const schedule = new ScheduleEntity();
+    const finalSchedule = await this.scheduleRepository.save(schedule);
+    const id = finalSchedule.id;
+    console.log(id);
+    finalSchedule.shifts = [];
     
-    const newShifts: Partial<ShiftEntity>[] = [];
+    const newShifts: ShiftEntity[] = [];
 
     for (const requirement of shiftRequirements) {
       const assignedNurses = this.assignToShift(nurses, requirement);
 
       for (const nurse of assignedNurses) {
-        newShifts.push({
-          nurse: nurse,
-          type: requirement.shift,
-          dayOfWeek: requirement.dayOfWeek,
-          schedule: finalSchedule
-        });
+        const newShift = new ShiftEntity();
+        newShift.dayOfWeek = requirement.dayOfWeek;
+        newShift.type = requirement.shift;
+        newShift.nurse = nurse;
+        newShift.schedule = finalSchedule;
+        finalSchedule.shifts.push(newShift);
+        await this.shiftRepository.save(newShift);
       }
     }
 
-    // Bulk insert shifts
-    await this.shiftRepository
-      .createQueryBuilder()
-      .insert()
-      .into(ShiftEntity)
-      .values(newShifts)
-      .execute();
-
-    // Clear entity manager to free up memory
-    await this.shiftRepository.manager.clear();
+    
 
     // Fetch the saved schedule with its shifts
-    return this.scheduleRepository.findOne({
-      where: { id: finalSchedule.id },
-      relations: ['shifts']
-    });
+    return this.scheduleRepository.save(finalSchedule);
   }
 
   async getSchedules(): Promise<any> {

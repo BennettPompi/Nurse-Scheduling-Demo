@@ -29,6 +29,6 @@ export class ShiftEntity {
   @ManyToOne(() => NurseEntity, nurse => nurse.shifts)
   nurse: NurseEntity;
 
-  @ManyToOne(() => ScheduleEntity, (schedule) => schedule.shifts)
+  @ManyToOne(() => ScheduleEntity, (schedule) => schedule.shifts, {cascade: true})
   schedule: ScheduleEntity;
 }

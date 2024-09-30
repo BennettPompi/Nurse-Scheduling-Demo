@@ -4,7 +4,7 @@ import "../App.css"
 import { NurseModel, NursePrefModel, ShiftPrefModel } from "../data-objects/nurse-preferences.interface";
 import { daysLowerArr, shiftsLowerArr } from "../utils";
 
-const MINIMUM_SHIFTS: number = 3; 
+const MINIMUM_SHIFTS = 3; 
 const NursePreferences = (nurse: NurseModel) => {
   const defaultShiftPrefs = (): ShiftPrefModel => {
     return { day: false, night: false };
@@ -35,7 +35,7 @@ const NursePreferences = (nurse: NurseModel) => {
   const handleSubmitPreferences = (event: React.FormEvent) => {
   //count shifts nurse marked as available
     const countShifts = (): number =>{
-      let shiftCount: number = 0;
+      let shiftCount = 0;
       const preferences: NursePrefModel = {...nursePreferredShifts}
       for (const day of preferences.days){
         for (const shift of Object.keys(day)){

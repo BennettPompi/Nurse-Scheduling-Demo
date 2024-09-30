@@ -1,5 +1,5 @@
 import React from 'react';
-import { daysProperArr, shiftsUpperArr } from '../utils';
+import { daysProperArr } from '../utils';
 
 interface ScheduleTableProps {
   schedule: any;

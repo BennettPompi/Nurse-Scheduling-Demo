@@ -13,13 +13,9 @@ export default {
     return data;
   },
   getNursePreferences: async (id: number): Promise<NursePrefModel> => {
-    try {
       const { data } = await instance.get(`/nurses/${id}/preferences`)
     return data;
-    }
-    catch (e) {
-      throw e;
-    }},    
+    },    
   
   setNursePreferences: async (id: number, preferences: NursePrefModel) => {
     const { data } = await instance.post(`/nurses/${id}/preferences`, preferences);
@@ -51,6 +47,7 @@ export default {
   },
   getSchedules: async () => {
     const { data } = await instance.get("/schedules");
+    console.log(data);
     return data;
   },
   getSchedule: async (id: number) => {

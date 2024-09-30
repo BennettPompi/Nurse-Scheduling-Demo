@@ -27,7 +27,7 @@ const NavBar: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link to="/generate-schedule" className="nav-link hover:text-gray-300">
+            <Link to="/schedules" className="nav-link hover:text-gray-300">
               Generate Schedule
             </Link>
           </li>
