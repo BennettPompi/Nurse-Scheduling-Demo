@@ -47,6 +47,7 @@ export default {
   },
   getSchedules: async () => {
     const { data } = await instance.get("/schedules");
+    console.log(data);
     return data;
   },
   getSchedule: async (id: number) => {
