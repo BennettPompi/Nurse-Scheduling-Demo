@@ -10,7 +10,6 @@ const instance = axios.create({
 export default {
   getNurses: async (): Promise<NurseModel[]> => {
     const { data } = await instance.get("/nurses");
-    console.log(data);
     return data;
   },
   getNursePreferences: async (id: number): Promise<NursePrefModel> => {
@@ -48,7 +47,6 @@ export default {
   },
   getSchedules: async () => {
     const { data } = await instance.get("/schedules");
-    console.log(data);
     return data;
   },
   getSchedule: async (id: number) => {

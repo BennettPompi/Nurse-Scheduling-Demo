@@ -47,22 +47,33 @@ const Home: React.FC = () => {
       <p>
         This is just gonna be a quick overview of some features I either thought would be cool to implement,
         partially did implement, or am currently working to implement as you read this.
-        <ul>
-          <li>
-            1. A calendar view of upcoming shifts, for each individual nurse. Obviously from a UX perspective
-            This just makes way more sense than the default table view.
+        <ul style={{ listStyleType: 'disc', paddingLeft: '20px', textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
+          <li style={{ marginBottom: '1rem' }}>
+            A calendar view of upcoming shifts, for each individual nurse. Obviously from a UX perspective
+            this just makes way more sense than the default table view.
           </li>
-          <li>
-            2. Finer grain preference control. I thought it would be cool if you could control the max 
+          <li style={{ marginBottom: '1rem' }}>
+            Finer grain preference control. I thought it would be cool if you could control the max 
             allowable shifts separately from the number of shifts marked as "preferred". 
             Would allow for more nuanced scheduling.
           </li>
-          <li>
-            3. Docker. If you look in the commit history I had this, I think, mostly done, but I broke something
-            and had to branch away. Might come back to it if I have some time today.
+          <li style={{ marginBottom: '1rem' }}>
+            Heuristic for schedule optimization. With normal inputs, this algorithm does pretty well,
+            but in a production setting with significantly more complex constraints, this isn't going to 
+            cut it. Having a baseline against which I could compare different iterations would be basically
+            non-negotiable.
           </li>
-          
-          
+          <li style={{ marginBottom: '1rem' }}>
+            Docker. If you look in the commit history I had this, I think, mostly done, but I broke something
+            and had to branch away. Might come back to it if I have some time today. (Update: I did this!)
+          </li>
+          <li style={{ marginBottom: '1rem' }}>
+            More of a general "thing I'd do differently," but restructuring my use of the backend in order to
+            avoid passing around excess data would probably be priority #1 in bringing this to production.
+            I will cut myself some slack here, as I'm a bit of a novice when it comes to nestjs and backend 
+            frameworks in general. However, I learned a great deal while building this, and want to continue to grow that
+            understanding and hopefully just write better code. 
+          </li>
         </ul>
       </p>
       <h3>Some General Observations / Challenges I Faced (Please read this to the end)</h3>
