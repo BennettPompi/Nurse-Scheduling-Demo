@@ -1,23 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import * as api from '../services/apiService';
+import React from 'react';
 import ScheduleTable from './ScheduleTable';
 
 interface ScheduleDetailsProps {
-  scheduleId: number;
+  schedule: any;
 }
 
-const ScheduleDetails: React.FC<ScheduleDetailsProps> = ({ scheduleId }) => {
-  const [schedule, setSchedule] = useState<any | null>(null);
-
-  useEffect(() => {
-    const fetchSchedule = async () => {
-      const fetchedSchedule = await api.default.getSchedule(scheduleId);
-      setSchedule(fetchedSchedule);
-    };
-
-    fetchSchedule();
-  }, [scheduleId]);
-
+const ScheduleDetails: React.FC<ScheduleDetailsProps> = ({ schedule }) => {
   if (!schedule) {
     return <div>Loading...</div>;
   }
@@ -26,7 +14,7 @@ const ScheduleDetails: React.FC<ScheduleDetailsProps> = ({ scheduleId }) => {
     <div className="schedule-details">
       <h3>Schedule {schedule.id}</h3>
       <p>Created: {new Date(schedule.created).toLocaleString()}</p>
-      <ScheduleTable schedule={schedule} />
+      <ScheduleTable shifts={schedule.shifts} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import Schedule from './Schedule';
+import Schedule from '../components/ScheduleMenu';
 
 const Schedules: React.FC = () => {
   return (

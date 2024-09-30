@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/apiService';
-import ScheduleList from '../components/ScheduleList';
-import ScheduleDetails from '../components/ScheduleDetails';
+import ScheduleList from './ScheduleList';
+import ScheduleDetails from './ScheduleDetails';
 
-const Schedule: React.FC = () => {
+const ScheduleMenu: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
 
@@ -30,11 +30,11 @@ const Schedule: React.FC = () => {
           selectedScheduleId={selectedScheduleId}
         />
         {selectedScheduleId && (
-          <ScheduleDetails scheduleId={selectedScheduleId} />
+          <ScheduleDetails schedule={schedules.find(s => s.id === selectedScheduleId)} />
         )}
       </div>
     </div>
   );
 };
 
-export default Schedule;
+export default ScheduleMenu;

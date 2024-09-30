@@ -1,11 +1,13 @@
 import React from 'react';
 import '../App.css';
 import NurseRosterTable from '../components/NurseRosterTable';
+import apiService from '../services/apiService';
 
 const Roster: React.FC = () => {
   const handleGenerateSchedule = async () => {
     try {
       alert('New schedule generated successfully!');
+      apiService.generateSchedule();
     } catch (error) {
       console.error('Error generating schedule:', error);
       alert('Failed to generate schedule. Please try again.');

@@ -17,7 +17,7 @@ export class ShiftController {
 
   @Get('schedule/:scheduleId')
   async getShiftsBySchedule(@Param('scheduleId') scheduleId: string) {
-    return this.shiftService.getShiftsBySchedule(scheduleId);
+    return this.shiftService.getShiftsBySchedule(parseInt(scheduleId));
   }
 
   @Get('requirements')

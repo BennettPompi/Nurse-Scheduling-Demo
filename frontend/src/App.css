@@ -175,7 +175,10 @@ a:hover {
 
 .schedule-container {
   display: flex;
+  flex-direction: column;
   gap: 2rem;
+  max-height: 80vh; /* Adjust the height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .schedule-list {

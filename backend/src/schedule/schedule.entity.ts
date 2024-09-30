@@ -13,9 +13,7 @@ export class ScheduleEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => ShiftEntity, (shift) => shift.schedule, {
-      eager: true,
-  })
+  @OneToMany(() => ShiftEntity, (shift) => shift.scheduleId)
   shifts: ShiftEntity[];
 
   @CreateDateColumn()

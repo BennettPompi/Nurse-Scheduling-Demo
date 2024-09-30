@@ -115,11 +115,6 @@ export class ScheduleService {
     const nurses: NurseEntity[] = await this.nurseService.getNurses();
     const schedule = new ScheduleEntity();
     const finalSchedule = await this.scheduleRepository.save(schedule);
-    const id = finalSchedule.id;
-    console.log(id);
-    finalSchedule.shifts = [];
-    
-    const newShifts: ShiftEntity[] = [];
 
     for (const requirement of shiftRequirements) {
       const assignedNurses = this.assignToShift(nurses, requirement);
@@ -129,24 +124,28 @@ export class ScheduleService {
         newShift.dayOfWeek = requirement.dayOfWeek;
         newShift.type = requirement.shift;
         newShift.nurse = nurse;
-        newShift.schedule = finalSchedule;
-        finalSchedule.shifts.push(newShift);
+        newShift.scheduleId = finalSchedule.id;
         await this.shiftRepository.save(newShift);
       }
     }
 
-    
-
-    // Fetch the saved schedule with its shifts
-    return this.scheduleRepository.save(finalSchedule);
+    return finalSchedule;
   }
 
   async getSchedules(): Promise<any> {
-    return this.scheduleRepository.find();
+    const schedules = await this.scheduleRepository.find();
+    for (const schedule of schedules) {
+      schedule.shifts = await this.shiftRepository.find({
+        where: { scheduleId: schedule.id },
+        relations: ['nurse']
+      });
+    }
+    return schedules;
   }
 
   async getScheduleById(id: number): Promise<any> {
-    return this.scheduleRepository.findOneByOrFail({id});
+    const schedule = await this.scheduleRepository.findOneByOrFail({id});
+    return schedule;
   }
 
   async getScheduleRequirements(): Promise<any> {

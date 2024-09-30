@@ -1,11 +1,37 @@
 import React from 'react';
 import { daysProperArr } from '../utils';
+import { NurseModel } from '../data-objects/nurse-preferences.interface';
 
-interface ScheduleTableProps {
-  schedule: any;
+interface Shift {
+  id: number;
+  dayOfWeek: string;
+  type: string;
+  nurse: NurseModel;
+  scheduleId: number;
 }
 
-const ScheduleTable: React.FC<ScheduleTableProps> = ({ schedule }) => {
+interface ScheduleTableProps {
+  shifts: Shift[];
+}
+
+const ScheduleTable: React.FC<ScheduleTableProps> = ({ shifts }) => {
+  const shiftMap: Record<string, boolean> = {};
+  const nurseSet = new Set<number>();
+
+  shifts.forEach((shift) => {
+    const key = `${shift.nurse.id}-${shift.dayOfWeek}-${shift.type}`;
+    shiftMap[key] = true;
+    nurseSet.add(shift.nurse.id);
+  });
+
+  const nurses = Array.from(nurseSet).map(nurseId => 
+    shifts.find(shift => shift.nurse.id === nurseId)?.nurse
+  ).filter((nurse): nurse is NurseModel => nurse !== undefined);
+
+  const hasShift = (nurseId: number, day: string, type: string): boolean => {
+    return shiftMap[`${nurseId}-${day}-${type.toLowerCase()}`] || false;
+  };
+
   return (
     <table className="schedule-table">
       <thead>
@@ -26,17 +52,23 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ schedule }) => {
         </tr>
       </thead>
       <tbody>
-        {schedule.shifts.map((nurseShifts: any) => (
-          <tr key={nurseShifts.nurse.id}>
-            <td>{nurseShifts.nurse.name}</td>
-            {daysProperArr.map(day => (
-              <React.Fragment key={day}>
-                <td>{nurseShifts.shifts[day.toLowerCase()]?.day ? 'X' : ''}</td>
-                <td>{nurseShifts.shifts[day.toLowerCase()]?.night ? 'X' : ''}</td>
-              </React.Fragment>
-            ))}
+        {nurses.length > 0 ? (
+          nurses.map((nurse) => (
+            <tr key={nurse.id}>
+              <td>{nurse.name}</td>
+              {daysProperArr.map((day) => (
+                <React.Fragment key={day}>
+                  <td>{hasShift(nurse.id, day, 'day') ? 'X' : ''}</td>
+                  <td>{hasShift(nurse.id, day, 'night') ? 'X' : ''}</td>
+                </React.Fragment>
+              ))}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={15}>No nurses found</td>
           </tr>
-        ))}
+        )}
       </tbody>
     </table>
   );
