@@ -30,13 +30,39 @@ const Home: React.FC = () => {
         Once I'd done this refactoring work, it was pretty trivial to throw the components into separate views and tie them
         together using React Router DOM.
       </p>
-      <h3>Backend</h3>
-      <p>
-      TODO
-      </p>
       <h3>The Scheduling Algorithm</h3>
       <p>
-        TODO
+        The scheduling algorithm is combines a simple round-robin approach with a grouping system.
+        This helps to maintain efficiency while also ensuring that nurses are assigned to shifts in a way that 
+        matches their preferences as closely as possible.
+        <br/><br/>
+        I think the algorithm itself is sound, however if I had more time I would make some significant improvements.
+        The main thing I would do is massively refactor it. My motivation for doing this would be to improve
+        both the readability and the performance of the algorithm. Right now, it's a little messy and could definitely
+        be optimized.
+      </p>
+      <h3>Some General Observations / Challenges I Faced (Please read this to the end)</h3>
+      <p>
+        To be completely honest, I approached this project from precisely the wrong end.
+        I started by building out the frontend, because I thought that it would help me to understand the backend
+        requirements. As it turns out, this was a terrible idea.
+        <br/><br/>
+        By starting here, I inadvertently doomed myself to wrangling awful, constantly-changing interfaces.
+        All of them were terribly named. 
+        These made my life extremely difficult, but by the time I realized this it was too late.
+        <br/><br/>
+        Additionally, this project made me realize how little I truly knew about relational databases.
+        Don't get me wrong, I've written probably thousands of SQL queries, but I've never actually had to
+        think so explicitly about the structure of my data. This experience was bewildering, exhilirating, and
+        generally quite fun.
+        <br/><br/>
+        To conclude, I had a really great time working on this. 
+        Did I far and away exceed the recommended time investment? Absolutely. 
+        Could I now create something of similar aesthetic quality and
+        much, much better architectural soundness in a fraction of the time? Almost certainly.
+        Does my app and look feel pretty slick? Mostly, I think.
+        <br/><br/>
+        Thanks for reading, and I hope you enjoy the app!
       </p>
     </div>
   </div>

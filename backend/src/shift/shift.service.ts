@@ -19,9 +19,13 @@ export class ShiftService {
   async getShiftsByNurse(nurseId: number) {
     return this.shiftRepository.find({ where: { nurse: { id: nurseId } } });
   }
-
-  async getShiftsBySchedule(scheduleId: string) {
-    throw new NotImplementedException();
+  async getShiftsBySchedule(scheduleId: number) {
+    return this.shiftRepository.find({
+      where: {
+        scheduleId: scheduleId
+      },
+      relations: ['schedule']
+    });
   }
 
   async getShiftRequirements(): Promise<ShiftRequirements[]> {

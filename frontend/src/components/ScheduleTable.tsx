@@ -1,89 +1,77 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { daysProperArr } from '../utils';
-import { NurseModel, NursePrefModel } from '../data-objects/nurse-preferences.interface';
-import apiService from '../services/apiService';
+import { NurseModel } from '../data-objects/nurse-preferences.interface';
 
-interface shiftInterface {
-id: number;
-dayOfWeek: string;
-type: string;
-nurseId: number;
-scheduleId: number;
-}
-
-interface fullShiftInterface {
-  shift: shiftInterface;
-  nurse: NurseModel;
-}
-
-interface scheduleInterface  {
-  shifts: shiftInterface[];
+interface Shift {
   id: number;
+  dayOfWeek: string;
+  type: string;
+  nurse: NurseModel;
+  scheduleId: number;
 }
 
 interface ScheduleTableProps {
-  schedule: scheduleInterface;
+  shifts: Shift[];
 }
-const ScheduleTable: React.FC<ScheduleTableProps> = ({ schedule }) => {
-    const [nurses, setNurses] = useState<NurseModel[]>([]);
-    const [shiftMap, setShiftMap] = useState<Record<string, shiftInterface>>({});
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const fetchedNurses: NurseModel[] = await apiService.getNurses();
-        setNurses(fetchedNurses);
+const ScheduleTable: React.FC<ScheduleTableProps> = ({ shifts }) => {
+  const shiftMap: Record<string, boolean> = {};
+  const nurseSet = new Set<number>();
 
-        const newShiftMap: Record<string, shiftInterface> = {};
-        schedule.shifts.forEach((shift: shiftInterface) => {
-          const key = `${shift.nurseId}-${shift.dayOfWeek}-${shift.type}`;
-          newShiftMap[key] = shift;
-        });
-        setShiftMap(newShiftMap);
-        console.log(newShiftMap);
-      };
-      fetchData();
-    }, [schedule.shifts]);
+  shifts.forEach((shift) => {
+    const key = `${shift.nurse.id}-${shift.dayOfWeek}-${shift.type}`;
+    shiftMap[key] = true;
+    nurseSet.add(shift.nurse.id);
+  });
 
-    // Helper function to get shift for a specific nurse, day, and type
-    const getShift = (nurseId: number, day: string, type: string) => {
-      const key = `${nurseId}-${day}-${type}`;
-      return shiftMap[key];
-    };
+  const nurses = Array.from(nurseSet).map(nurseId => 
+    shifts.find(shift => shift.nurse.id === nurseId)?.nurse
+  ).filter((nurse): nurse is NurseModel => nurse !== undefined);
 
-    return (
-      <table className="schedule-table">
-        <thead>
-          <tr>
-            <th>Nurse</th>
-            {daysProperArr.map(day => (
-              <th key={day} colSpan={2}>{day}</th>
-            ))}
-          </tr>
-          <tr>
-            <th></th>
-            {daysProperArr.map(day => (
-              <React.Fragment key={day}>
-                <th>Day</th>
-                <th>Night</th>
-              </React.Fragment>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {nurses.map((nurse) => (
+  const hasShift = (nurseId: number, day: string, type: string): boolean => {
+    return shiftMap[`${nurseId}-${day}-${type.toLowerCase()}`] || false;
+  };
+
+  return (
+    <table className="schedule-table">
+      <thead>
+        <tr>
+          <th>Nurse</th>
+          {daysProperArr.map(day => (
+            <th key={day} colSpan={2}>{day}</th>
+          ))}
+        </tr>
+        <tr>
+          <th></th>
+          {daysProperArr.map(day => (
+            <React.Fragment key={day}>
+              <th>Day</th>
+              <th>Night</th>
+            </React.Fragment>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {nurses.length > 0 ? (
+          nurses.map((nurse) => (
             <tr key={nurse.id}>
               <td>{nurse.name}</td>
               {daysProperArr.map((day) => (
                 <React.Fragment key={day}>
-                  <td>{getShift(nurse.id, day, 'Day') ? 'X' : ''}</td>
-                  <td>{getShift(nurse.id, day, 'Night') ? 'X' : ''}</td>
+                  <td>{hasShift(nurse.id, day, 'day') ? 'X' : ''}</td>
+                  <td>{hasShift(nurse.id, day, 'night') ? 'X' : ''}</td>
                 </React.Fragment>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    );
+          ))
+        ) : (
+          <tr>
+            <td colSpan={15}>No nurses found</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
 };
 
 export default ScheduleTable;
