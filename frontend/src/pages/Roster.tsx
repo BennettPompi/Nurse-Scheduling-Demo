@@ -1,11 +1,28 @@
 import React from 'react';
 import '../App.css';
 import NurseRosterTable from '../components/NurseRosterTable';
+import apiService from '../services/apiService';
+
 const Roster: React.FC = () => {
-  return (<div className="card">
-    <h2>Staff Roster & Preferences</h2>
+  const handleGenerateSchedule = async () => {
+    try {
+      const newSchedule = await apiService.generateSchedule();
+      alert('New schedule generated successfully!');
+    } catch (error) {
+      console.error('Error generating schedule:', error);
+      alert('Failed to generate schedule. Please try again.');
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>Staff Roster & Preferences</h2>
       <NurseRosterTable />
-  </div>);
+      <button onClick={handleGenerateSchedule} className="generate-schedule-btn">
+        Generate New Schedule
+      </button>
+    </div>
+  );
 };
 
 export default Roster;

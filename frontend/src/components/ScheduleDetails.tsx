@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import * as api from '../services/apiService';
+import ScheduleTable from './ScheduleTable';
 
-interface ScheduleDisplayProps {
+interface ScheduleDetailsProps {
   scheduleId: number;
 }
 
-const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({ scheduleId }) => {
-  const [schedule, setSchedule] = useState<unknown | null>(null);
+const ScheduleDetails: React.FC<ScheduleDetailsProps> = ({ scheduleId }) => {
+  const [schedule, setSchedule] = useState<any | null>(null);
 
   useEffect(() => {
-    // TODO: Fetch the schedule, etc.
-    // setSchedule(...);
+    const fetchSchedule = async () => {
+      const fetchedSchedule = await api.default.getSchedule(scheduleId);
+      setSchedule(fetchedSchedule);
+    };
+
+    fetchSchedule();
   }, [scheduleId]);
 
   if (!schedule) {
@@ -17,9 +23,10 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({ scheduleId }) => {
   }
 
   return (
-    <div>
-      <h2>Schedule {schedule.id}</h2>
-      {/* TODO: Display the assigned shifts in the schedule */}
+    <div className="schedule-details">
+      <h3>Schedule {schedule.id}</h3>
+      <p>Created: {new Date(schedule.created).toLocaleString()}</p>
+      <ScheduleTable schedule={schedule} />
     </div>
   );
 };

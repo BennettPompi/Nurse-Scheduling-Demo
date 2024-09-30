@@ -16,8 +16,8 @@ export class ShiftService {
     return this.shiftRepository.find();
   }
 
-  async getShiftsByNurse(nurseId: string) {
-    throw new NotImplementedException();
+  async getShiftsByNurse(nurseId: number) {
+    return this.shiftRepository.find({ where: { nurse: { id: nurseId } } });
   }
 
   async getShiftsBySchedule(scheduleId: string) {

@@ -172,3 +172,48 @@ a:hover {
   text-align: center;
   border-bottom: 1px solid #ddd;
 }
+
+.schedule-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.schedule-list {
+  flex: 1;
+}
+
+.schedule-details {
+  flex: 2;
+}
+
+.schedule-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.schedule-list li {
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.schedule-list li.selected {
+  background-color: #d0d0d0;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.schedule-table th, .schedule-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.schedule-table th {
+  background-color: #f2f2f2;
+}

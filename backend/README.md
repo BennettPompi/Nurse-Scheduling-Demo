@@ -1,44 +1,51 @@
-## Description
+# Scheduling Function Explanation
 
-This project is based on the [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-Additional commands that may be helpful for the backend below:
+This function takes into account several factors:
 
-## Installation
+\- Nurses' availability
 
-```bash
-$ pnpm install
-```
+\- Nurses' preferences
 
-## Running the app
+\- Nurses' Number of shifts marked as preferred
 
-```bash
-# development
-$ pnpm run start
+\- Shift requirements
 
-# watch mode
-$ pnpm run start:dev
+\- Double shifts
 
-# production mode
-$ pnpm run start:prod
-```
+ \n 
 
-## Test
+## Assignment Algorithm Pseudocode:
 
-```bash
-# unit tests
-$ pnpm run test
+Let N -> the set of all nurses
 
-# e2e tests
-$ pnpm run test:e2e
+Let P -> the subset of N who have shift x selected as preferred
 
-# test coverage
-$ pnpm run test:cov
-```
+Let F -> the subset of N for whom the assignment of this shift would not result in a double shift
 
-## Support
+Let L -> the subset of N for whom the assignment of this shift would not cause them to
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+exceed the number of shifts marked as available
 
-## License
+ \n 
 
-Nest is [MIT licensed](LICENSE).
+Round 0: Sort N by number of shifts marked available. We don't want to penalize someone for only marking 3 shifts
+
+as preferred
+
+Round 1: Take nurses from G_1 -> P & F & L until we either reach nurses required or exhaust group
+
+Round 2: If we need more nurses, repeat with G_2 -> P' & L & F
+
+Round 3: If needed, repeat with G_3 -> G_2 -> P & L & F'
+
+FINALLY: In the absolute worst case scenario, draw randomly from N,
+
+checking we aren't assigning the same person twice.
+
+ \n 
+
+At all points, return if we've met the requested number or if all nurses have been assigned to the shift
+
+ \n 
+
+Time Complexity of this algorithm is O(nLog(n))

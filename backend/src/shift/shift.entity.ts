@@ -20,8 +20,8 @@ export class ShiftEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'date' })
-  date: Date;
+  @Column({ type: 'varchar', length: 10 })
+  dayOfWeek: string;
 
   @Column({ type: 'varchar', length: 10 })
   type: ShiftType;

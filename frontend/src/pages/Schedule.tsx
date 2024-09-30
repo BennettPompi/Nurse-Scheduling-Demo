@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as api from '../services/apiService';
+import ScheduleList from '../components/ScheduleList';
+import ScheduleDetails from '../components/ScheduleDetails';
 
 const Schedule: React.FC = () => {
-  const [schedules, setSchedules] = useState<unknown[] | null>(null);
-  return (<div className="card">
-    <h2>Schedules</h2>
-    <div>TODO</div>
-    {schedules &&
-      schedules.map((schedule: any) => (
-        <div className="schedule" key={schedule.id}>
-          {/* TODO: Display table of available schedules */}
-        </div>
-      ))}
-  </div>);
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      const fetchedSchedules = await api.default.getSchedules();
+      setSchedules(fetchedSchedules);
+    };
+
+    fetchSchedules();
+  }, []);
+
+  const handleScheduleSelect = (scheduleId: number) => {
+    setSelectedScheduleId(scheduleId);
+  };
+
+  return (
+    <div className="card">
+      <h2>Schedules</h2>
+      <div className="schedule-container">
+        <ScheduleList 
+          schedules={schedules} 
+          onScheduleSelect={handleScheduleSelect}
+          selectedScheduleId={selectedScheduleId}
+        />
+        {selectedScheduleId && (
+          <ScheduleDetails scheduleId={selectedScheduleId} />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Schedule;

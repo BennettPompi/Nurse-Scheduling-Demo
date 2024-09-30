@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { NurseEntity } from './nurse.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,7 +12,7 @@ export class NurseService {
   ) {}
 
   async getNurses(): Promise<NurseEntity[]> {
-    return this.nurseRepository.find();
+    return this.nurseRepository.find({order: {id: 'ASC'}});
   }
   async getNursePrefsByID(id: number): Promise<NursePrefModel>{
     try {

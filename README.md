@@ -6,7 +6,7 @@ This exercise evaluates your skills in full-stack TypeScript development, using 
 
 You may complete this exercise in any language, but we only provide this starter project in TypeScript. We've done this to keep the exercise as efficient as possible and to mirror the language and frameworks you'll encounter at M7. If you choose to use another language, start from scratch with the code here as a reference.
 
-This exercise should take approximately 4 hours to complete. It does _not_ need to be completed in one contiguous block of time. If you spend more than the recommended time, you may stop and submit what you have. Be sure to let us know how long you spent, as we use this metric to assess submissions fairly.
+This exercise should take approximately 4 hours to complete. It does *not* need to be completed in one contiguous block of time. If you spend more than the recommended time, you may stop and submit what you have. Be sure to let us know how long you spent, as we use this metric to assess submissions fairly.
 
 ## The exercise
 
@@ -28,30 +28,31 @@ You'll need to implement a scheduling algorithm in the `ScheduleService` that ge
 
 Develop a user interface that displays the weekly schedule for all nurses. You can choose the design and layout. Get creative if you like! It can be as beautiful or brutal as time allows, but it must be usable.
 
-- The header should display the day of the week and indicate whether each shift type meets the requirements for that day.
-- Each row of the schedule should display the nurse's name and their assigned shift type for a given day.
+* The header should display the day of the week and indicate whether each shift type meets the requirements for that day.
+* Each row of the schedule should display the nurse's name and their assigned shift type for a given day.
 
 ### Considerations
 
 While going through the exercise, note any improvements you would make or issues you run into. We will discuss these during the subsequent interview. If time allows, you may include these improvements in your submission. Some examples to spark your imagination:
 
-- Unit tests for the backend or frontend.
-- Updated Docker Compose file to run the backend and frontend in tandem, in addition to the database, handling all prerequisites.
-- Outputting the schedule in a different format (CSV, PDF, etc.).
-- Whatever else you can think of!
+* Unit tests for the backend or frontend.
+* Updated Docker Compose file to run the backend and frontend in tandem, in addition to the database, handling all prerequisites.
+* Outputting the schedule in a different format (CSV, PDF, etc.).
+* Whatever else you can think of!
 
 ## Up and running
 
-1. Run `pnpm install` for both projects to install dependencies.
-1. For the backend project, additionally:
-   1. Run `docker compose up` to start the MySQL database
-   1. Run migrations to create and seed the database: `pnpm run migrations:run`
-1. Run the backend server: `pnpm start:dev`
-1. Run the frontend server: `pnpm dev`
 
-The backend and frontend should now be running. Upon visiting http://localhost:5174 you should see a page showing nurses and shift requirements.
-Note: The UI is optimized and meant to be used with a light-mode browser / OS setting for the best experience.
-Dark mode will not be optimal.
+1. Run `pnpm install` for both projects to install dependencies.
+2. For the backend project, additionally:
+
+   
+   1. Run `docker compose up` to start the MySQL database
+   2. Run migrations to create and seed the database: `pnpm run migrations:run`
+3. Run the backend server: `pnpm start:dev`
+4. Run the frontend server: `pnpm dev`
+
+The backend and frontend should now be running. Upon visiting http://localhost:5173 you should see a page showing nurses and shift requirements. Note: The UI is optimized and meant to be used with a light-mode browser / OS setting for the best experience. Dark mode will not be optimal.
 
 ## Submission
 
@@ -60,6 +61,7 @@ Once you've completed the exercise, please zip your code and email it to recruit
 ## Evaluation
 
 We will evaluate your work based on the following criteria, in order of importance:
+
 
 1. **Functionality**: Does the system work as expected?
 2. **Code quality**: Is the code clean and organized, and does it follow best practices?

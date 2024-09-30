@@ -4,14 +4,18 @@ import "../App.css"
 import { NurseModel, NursePrefModel, ShiftPrefModel } from "../data-objects/nurse-preferences.interface";
 import { daysLowerArr, shiftsLowerArr } from "../utils";
 
+const MINIMUM_SHIFTS: number = 3; 
 const NursePreferences = (nurse: NurseModel) => {
   const defaultShiftPrefs = (): ShiftPrefModel => {
     return { day: false, night: false };
   }
   const defaultNursePrefs = (): NursePrefModel => {
-    const prefs = {} as NursePrefModel;
-    for (const day of daysLowerArr) {
-      prefs[day as keyof NursePrefModel] = defaultShiftPrefs();
+    const prefs = {
+      availableShifts: 0,
+      days: []
+    } as NursePrefModel;
+    for (let i = 0; i < 7; i++) {
+      prefs.days.push(defaultShiftPrefs());
     }
     return prefs;
   }
@@ -22,58 +26,88 @@ const NursePreferences = (nurse: NurseModel) => {
   // preferred shifts represents nurse preferences for the week in a format that makes it easy to render
   const [nursePreferredShifts, setNursePreferredShifts] = useState(
     defaultNursePrefs()
-    // {
-    //   monday_day: false, 
-    //   monday_night: false,
-    //   tuesday_day: false,
-    //   tuesday_night: false,
-    //   wednesday_day: false,
-    //   wednesday_night: false,
-    //   thursday_day: false,
-    //   thursday_night: false,
-    //   friday_day: false,
-    //   friday_night: false,
-    //   saturday_day: false,
-    //   saturday_night: false,
-    //   sunday_day: false,
-    //   sunday_night: false
-    // }
   );
 
   const handleClick = () => {
     setShowNursePreferredShifts((show) => !show);
   };
 
-  const handleSubmitPreferences = (event: any) => {
-    const setPreferences = async () => {
-      apiService.setNursePreferences(nurse.id, nursePreferredShifts);
+  const handleSubmitPreferences = (event: React.FormEvent) => {
+  //count shifts nurse marked as available
+    const countShifts = (): number =>{
+      let shiftCount: number = 0;
+      const preferences: NursePrefModel = {...nursePreferredShifts}
+      for (const day of preferences.days){
+        for (const shift of Object.keys(day)){
+          if (day[shift as keyof ShiftPrefModel]){
+            shiftCount++;
+          }
+        }
+      }
+      return shiftCount;
+    }
+    
+    const setPreferences = async (updatedPreferences: NursePrefModel) => {
+      apiService.setNursePreferences(nurse.id, updatedPreferences);
     };
     event.preventDefault();
-    setPreferences().catch(console.error);
+    const shiftsAvailable: number = countShifts();
+    //check if they meet minimum shift requirement
+    if (shiftsAvailable >= MINIMUM_SHIFTS) {
+      console.log(shiftsAvailable);
+      const updatedPreferences = {
+        ...nursePreferredShifts,
+        availableShifts: shiftsAvailable
+      };
+      setNursePreferredShifts(updatedPreferences);
+      console.log(nursePreferredShifts);
+      setPreferences(updatedPreferences).catch(console.error);
+    }
+    else{
+      console.log(`Please select at least ${MINIMUM_SHIFTS} shifts. You have currently selected ${shiftsAvailable} shifts.`);
+      alert(`Please select at least ${MINIMUM_SHIFTS} shifts. You have currently selected ${shiftsAvailable} shifts.`);
+    }
   };
 
   useEffect(() => {
-    // converts the preferences from the API to the format that is used in the state of nursePreferredShifts
     const fetchPreferences = async () => {
-      let nursePreferences = await api.default.getNursePreferences(nurse.id);
-      if (!nursePreferences) {
-        nursePreferences = defaultNursePrefs();
-      }
-      setNursePreferredShifts(nursePreferences);
+        let nursePreferences = await api.default.getNursePreferences(nurse.id);
+        if (!nursePreferences || !Array.isArray(nursePreferences.days)) {
+          nursePreferences = defaultNursePrefs();
+        }
+        setNursePreferredShifts(nursePreferences);
     };
-    fetchPreferences().catch(console.error);
+
+    fetchPreferences().catch(() => {
+      //log error to console and return early (because we initialize the pref state with default prefs)
+      console.error("Preferences not found for nurse " + nurse.id + ".\n" +
+        "Did you initialize them?"
+      )
+      return
+    });
   }, [nurse.id]);
 
   // changing the preferredShifts in the page depending on the checkboxes
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
-    setNursePreferredShifts(prevPrefs => ({
-      ...prevPrefs,
-      [name as keyof NursePrefModel]: {
-        ...(prevPrefs[name as keyof NursePrefModel] || {}),
-        [value]: checked
+    setNursePreferredShifts(prevPrefs => {
+      try{
+        const dayIndex = daysLowerArr.indexOf(name);
+        if (dayIndex === -1) return prevPrefs;
+      
+        const updatedDays = [...prevPrefs.days];
+        updatedDays[dayIndex] = {
+          ...updatedDays[dayIndex],
+          [value as keyof ShiftPrefModel]: checked
+        };
+        const ret = {
+          ...prevPrefs,
+          days: updatedDays,
+        };
+        return ret;
       }
-    }));
+      catch (e) {return defaultNursePrefs()}
+    });
   };
 
   return (
@@ -81,7 +115,7 @@ const NursePreferences = (nurse: NurseModel) => {
       <button onClick={handleClick}>{nurse.name}</button>
       {showNursePreferredShifts && (
         <div>
-          Pick at least 3 preferred shiftsLowerArr for the week:
+          Pick at least 3 preferred shifts for the week:
           <form onSubmit={handleSubmitPreferences}>
             <table className="nurse-preferences">
               <thead>
@@ -103,7 +137,10 @@ const NursePreferences = (nurse: NurseModel) => {
                           type="checkbox" 
                           name={day} 
                           value={shift} 
-                          checked={nursePreferredShifts[day as keyof NursePrefModel][shift as keyof ShiftPrefModel]} />
+                          checked={
+                            nursePreferredShifts.days ? 
+                            nursePreferredShifts.days[daysLowerArr.indexOf(day)][shift as keyof ShiftPrefModel]
+                          : false} />
                         )}
                         <br />
                       </td>

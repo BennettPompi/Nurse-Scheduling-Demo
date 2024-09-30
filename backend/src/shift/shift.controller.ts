@@ -12,7 +12,7 @@ export class ShiftController {
 
   @Get('nurse/:nurseId')
   async getShiftsByNurse(@Param('nurseId') nurseId: string) {
-    return this.shiftService.getShiftsByNurse(nurseId);
+    return this.shiftService.getShiftsByNurse(parseInt(nurseId));
   }
 
   @Get('schedule/:scheduleId')

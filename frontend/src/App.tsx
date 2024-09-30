@@ -3,7 +3,7 @@ import NavBar from "./components/NavBar";
 import { Routes, Route } from 'react-router-dom';
 import Requirements from "./pages/Requirements";
 import Roster from "./pages/Roster";
-import Schedule from "./pages/Schedule";
+import Schedules from "./pages/Schedules";
 import Home from "./pages/Home";
 function App() {
   
@@ -19,7 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/requirements" element={<Requirements />} />
           <Route path="/roster" element={<Roster />} />
-          <Route path="/generate-schedule" element={<Schedule />} />
+          <Route path="/schedules" element={<Schedules />} />
         </Routes>
       </div>
     </>

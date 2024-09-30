@@ -8,13 +8,15 @@
 
   \-  Greedy solution seems fine here
 
-  ### Saturday
+  ### Saturday / Sunday
 - [x] Refactoring / Encapsulation
-- [x] Build UI / UX
-- [ ] Get Preference entry / storage working
-- [ ] set up backend / data schema
+- [x] Get Preference entry / storage working
+- [x] set up backend / data schema
 - [ ] implement scheduling algorithm
 - [ ] test
-- [ ] knock out at least some of the extra features (docker deployment,
+- [ ] knock out at least some of the extra features
+  - [ ] Docker Single Deploy
+  - [x] Restructuring Frontend (Multi-view single page + Making it pretty)
+  - [x] Encapsulate Frontend
 
 

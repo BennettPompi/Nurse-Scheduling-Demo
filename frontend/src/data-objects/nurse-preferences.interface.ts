@@ -3,16 +3,11 @@ export interface ShiftPrefModel {
     night: boolean;
 }
 export interface NursePrefModel {
-    monday: ShiftPrefModel;
-    tuesday: ShiftPrefModel;
-    wednesday: ShiftPrefModel;
-    thursday: ShiftPrefModel;
-    friday: ShiftPrefModel;
-    saturday: ShiftPrefModel;
-    sunday: ShiftPrefModel;
-    
+    availableShifts: number;
+    days: ShiftPrefModel[]
 }
 export interface NurseModel{
     name: string;
     id: number;
+    preferences: NursePrefModel;
 }
