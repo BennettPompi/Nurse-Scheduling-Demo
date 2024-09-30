@@ -1,48 +1,51 @@
-version: '3'
-
 services:
   db:
     image: mysql:8.0
-    container_name: m7-health-exercise-db-full
+    container_name: m7-health-exercise-db
     restart: always
     cap_add:
       - SYS_NICE
     environment:
       MYSQL_DATABASE: m7_health
       MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db:/var/lib/mysql
     networks:
-      - internalNetwork
-    volumes:
-      - ./db:/var/lib/mysql
-  
-  frontend:
-    build: .
-    container_name: m7-health-exercise-frontend
-    restart: always
-    ports:
-      - 8080:8080
-    volumes:
-      - ./frontend:/frontend
-    command: ["npm", "run", "dev"]
+      - db-access
+
   backend:
-    build: .
-    container_name: m7-health-exercise-backend
+    depends_on:
+      - db
+    build:
+      dockerfile: ./Dockerfile
+      context: ./backend
+    container_name: backend
+    restart: always
+    environment:
+      MYSQL_DATABASE: m7_health
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - 3000:3000
+    networks:
+      - db-access
+      - default
+
+  frontend:
+    depends_on:
+      - backend
+    build:
+      dockerfile: ./Dockerfile
+      context: ./frontend
+    container_name: frontend
     restart: always
     ports:
-      - 3001:3001
+      - 5173:5173
     networks:
-      - internalNetwork
       - default
-    expose:
-      - 3300
-    volumes:
-      - ./backend:/backend
-    command: ["npm", "run", "dev"]
+
+networks:
+  db-access:
+    external: false
 
 volumes:
   db:
-    driver: local
-
-networks:
-  internalNetwork:
-    driver: bridge
