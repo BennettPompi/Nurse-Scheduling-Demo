@@ -134,9 +134,6 @@ export class ScheduleService {
         await this.shiftRepository.save(newShift);
       }
     }
-
-    
-
     // Fetch the saved schedule with its shifts
     return this.scheduleRepository.save(finalSchedule);
   }

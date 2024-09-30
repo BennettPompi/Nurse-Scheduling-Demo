@@ -28,7 +28,7 @@ const NavBar: React.FC = () => {
           </li>
           <li>
             <Link to="/schedules" className="nav-link hover:text-gray-300">
-              Generate Schedule
+              Schedules
             </Link>
           </li>
         </ul>
