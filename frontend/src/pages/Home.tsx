@@ -41,6 +41,30 @@ const Home: React.FC = () => {
         both the readability and the performance of the algorithm. Right now, it's a little messy and could definitely
         be optimized.
       </p>
+      <h3>
+        Features I Would Add
+      </h3>
+      <p>
+        This is just gonna be a quick overview of some features I either thought would be cool to implement,
+        partially did implement, or am currently working to implement as you read this.
+        <ul>
+          <li>
+            1. A calendar view of upcoming shifts, for each individual nurse. Obviously from a UX perspective
+            This just makes way more sense than the default table view.
+          </li>
+          <li>
+            2. Finer grain preference control. I thought it would be cool if you could control the max 
+            allowable shifts separately from the number of shifts marked as "preferred". 
+            Would allow for more nuanced scheduling.
+          </li>
+          <li>
+            3. Docker. If you look in the commit history I had this, I think, mostly done, but I broke something
+            and had to branch away. Might come back to it if I have some time today.
+          </li>
+          
+          
+        </ul>
+      </p>
       <h3>Some General Observations / Challenges I Faced (Please read this to the end)</h3>
       <p>
         To be completely honest, I approached this project from precisely the wrong end.
