@@ -6,7 +6,6 @@ import {
 } from 'typeorm';
 
 import { NurseEntity } from '../nurse/nurse.entity';
-import { ScheduleEntity } from '../schedule/schedule.entity';
 
 export type ShiftType = 'day' | 'night';
 export type ShiftRequirements = {

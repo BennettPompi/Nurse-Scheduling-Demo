@@ -12,10 +12,10 @@
 - [x] Refactoring / Encapsulation
 - [x] Get Preference entry / storage working
 - [x] set up backend / data schema
-- [ ] implement scheduling algorithm
-- [ ] test
-- [ ] knock out at least some of the extra features
-  - [ ] Docker Single Deploy
+- [x] implement scheduling algorithm
+- [x] test
+- [x] knock out at least some of the extra features
+  - [x] Docker Single Deploy
   - [x] Restructuring Frontend (Multi-view single page + Making it pretty)
   - [x] Encapsulate Frontend
 
